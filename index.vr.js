@@ -9,6 +9,7 @@ import {
     View,
     VrButton,
 } from "react-vr";
+import { Linking } from "react-native";
 
 const Arrow = props => (
     <Model
@@ -83,9 +84,22 @@ function getArrowPosition({ location, room }) {
 }
 
 export default class reactvr_cli_experiment extends React.Component {
-    constructor() {
+    constructor({ location }) {
         super();
         this.state = { location: null, room: null };
+    }
+
+    componentDidMount() {
+        Linking.getInitialURL().then(url => {
+            if (url) {
+                let parts = url.split(/\?|&/);
+                parts.forEach(part => {
+                    if (part.startsWith("location")) {
+                        this.setState({ location: part.substring(9) });
+                    }
+                });
+            }
+        });
     }
 
     render() {
