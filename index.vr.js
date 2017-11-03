@@ -1,11 +1,34 @@
 import React from "react";
-import { AppRegistry, asset,DirectionalLight, LiveEnvCamera, Model, Text, View } from "react-vr";
+import {
+  AppRegistry,
+  asset,
+  SpotLight,
+  LiveEnvCamera,
+  Model,
+  Text,
+  View
+} from "react-vr";
 
 export default class reactvr_cli_experiment extends React.Component {
+  constructor() {
+    super();
+    this.state = { index: 0 };
+  }
+
+  componentDidMount() {
+    const updateIndex = () => {
+      this.setState(state => ({ index: state.index + 1 }));
+      requestAnimationFrame(updateIndex);
+    }
+    requestAnimationFrame(updateIndex);
+  }
+
   render() {
+    const { index } = this.state;
     return (
       <View>
         <LiveEnvCamera />
+        <SpotLight style={{ transform: [{ translate: [0, 0, 0] }] }} />
         <Text
           style={{
             backgroundColor: "#777879",
@@ -23,13 +46,15 @@ export default class reactvr_cli_experiment extends React.Component {
         </Text>
 
         <Model
+          lit={true}
           source={{
             obj: asset("model.obj"),
             mtl: asset("materials.mtl")
           }}
           style={{
+            position: "absolute",
             layoutOrigin: [0, 0],
-            transform: [{ translate: [0, 1, -3 ]  }]
+            transform: [{ translate: [0, -4, -10] }, { rotateY: index }]
           }}
         />
       </View>
