@@ -32,13 +32,64 @@ function arrowTransforms(arrowPosition) {
     return [{ translate }, { rotateY: arrowPosition - 135 }];
 }
 
+const directionsLookup = {
+    hall: {
+        "Blue Sky Thinking Room 201": 0,
+        Ganesha: 180,
+    },
+    studio: {
+        "Blue Sky Thinking Room 201": 270,
+        Ganesha: 180,
+    },
+    stairs: {
+        "Blue Sky Thinking Room 201": 270,
+        Ganesha: 180,
+    },
+};
+
+const backOption = "< Back";
+
+function getOptions({ location, room }) {
+    if (!location) {
+        return [...Object.keys(directionsLookup)];
+    }
+    if (!room) {
+        return [backOption, ...Object.keys(directionsLookup[location])];
+    }
+    return [backOption];
+}
+
+function newState({ location, room }, optionClicked) {
+    if (optionClicked === backOption) {
+        if (!room) {
+            return { location: null };
+        }
+        return { room: null };
+    }
+    if (!location) {
+        return { location: optionClicked };
+    }
+    if (!room) {
+        return { room: optionClicked };
+    }
+}
+
+function getArrowPosition({ location, room }) {
+    if (!location || !room) {
+        return null;
+    }
+
+    return directionsLookup[location][room];
+}
+
 export default class reactvr_cli_experiment extends React.Component {
     constructor() {
         super();
-        this.state = { arrowPosition: null };
+        this.state = { location: null, room: null };
     }
 
     render() {
+        const arrowPosition = getArrowPosition(this.state);
         return (
             <View>
                 <LiveEnvCamera />
@@ -52,71 +103,30 @@ export default class reactvr_cli_experiment extends React.Component {
                         transform: [{ translate: [-1, 1, -5] }],
                     }}
                 >
-                    <Text
-                        style={{
-                            margin: 0.1,
-                            height: 0.3,
-                            backgroundColor: "black",
-                        }}
-                    >
-                        {this.state.arrowPosition}
-                    </Text>
-                    <VrButton
-                        style={{
-                            margin: 0.1,
-                            height: 0.3,
-                            backgroundColor: "black",
-                        }}
-                        onClick={() => this.setState({ arrowPosition: 0 })}
-                    >
-                        <Text style={{ fontSize: 0.2, textAlign: "center" }}>
-                            Up
-                        </Text>
-                    </VrButton>
-                    <VrButton
-                        style={{
-                            margin: 0.1,
-                            height: 0.3,
-                            backgroundColor: "black",
-                        }}
-                        onClick={() => this.setState({ arrowPosition: 270 })}
-                    >
-                        <Text style={{ fontSize: 0.2, textAlign: "center" }}>
-                            Right
-                        </Text>
-                    </VrButton>
-                    <VrButton
-                        style={{
-                            margin: 0.1,
-                            height: 0.3,
-                            backgroundColor: "black",
-                        }}
-                        onClick={() => this.setState({ arrowPosition: 180 })}
-                    >
-                        <Text style={{ fontSize: 0.2, textAlign: "center" }}>
-                            Down
-                        </Text>
-                    </VrButton>
-                    <VrButton
-                        style={{
-                            margin: 0.1,
-                            height: 0.3,
-                            backgroundColor: "black",
-                        }}
-                        onClick={() => this.setState({ arrowPosition: 90 })}
-                    >
-                        <Text style={{ fontSize: 0.2, textAlign: "center" }}>
-                            Left
-                        </Text>
-                    </VrButton>
+                    {getOptions(this.state).map(option => (
+                        <VrButton
+                            key={option}
+                            style={{
+                                margin: 0.1,
+                                height: 0.3,
+                                backgroundColor: "black",
+                            }}
+                            onClick={() =>
+                                this.setState(newState(this.state, option))}
+                        >
+                            <Text
+                                style={{ fontSize: 0.2, textAlign: "center" }}
+                            >
+                                {option}
+                            </Text>
+                        </VrButton>
+                    ))}
                 </View>
-                {this.state.arrowPosition !== null && (
+                {arrowPosition !== null && (
                     <Arrow
                         style={{
                             position: "absolute",
-                            transform: arrowTransforms(
-                                this.state.arrowPosition,
-                            ),
+                            transform: arrowTransforms(arrowPosition),
                         }}
                     />
                 )}
