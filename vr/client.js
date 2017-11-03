@@ -8,11 +8,14 @@ import {VRInstance} from 'react-vr-web';
 function init(bundle, parent, options) {
   const vr = new VRInstance(bundle, 'reactvr_cli_experiment', parent, {
     // Add custom options here
+      hideCompass: true,
+      disableTouchPanning: true,
     ...options,
   });
   vr.render = function() {
     // Any custom behavior you want to perform on each frame goes here
   };
+
   // Begin the animation loop
   vr.start();
   return vr;
