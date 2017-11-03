@@ -6,45 +6,53 @@ import {
   LiveEnvCamera,
   Model,
   Text,
-  View
+  View,
+  VrButton
 } from "react-vr";
 
 export default class reactvr_cli_experiment extends React.Component {
   constructor() {
     super();
-    this.state = { index: 0 };
-  }
-
-  componentDidMount() {
-    const updateIndex = () => {
-      this.setState(state => ({ index: state.index + 1 }));
-      requestAnimationFrame(updateIndex);
-    }
-    requestAnimationFrame(updateIndex);
+    this.state = { arrowPosition: null };
   }
 
   render() {
-    const { index } = this.state;
     return (
       <View>
         <LiveEnvCamera />
         <SpotLight style={{ transform: [{ translate: [0, 0, 0] }] }} />
-        <Text
-          style={{
-            backgroundColor: "#777879",
-            fontSize: 0.8,
-            fontWeight: "400",
-            layoutOrigin: [0, 0],
-            paddingLeft: 0.2,
-            paddingRight: 0.2,
-            textAlign: "center",
-            textAlignVertical: "center",
-            transform: [{ translate: [0, 0, -3] }]
-          }}
-        >
-          hello
-        </Text>
-
+          <View style={{
+              flex: 1,
+              flexDirection: 'column',
+              width: 2,
+              alignItems: 'stretch',
+              transform: [{translate: [-1, 1, -5]}],
+          }}>
+              <Text
+                  style={{margin: 0.1, height: 0.3, backgroundColor: 'black'}}>
+                  {this.state.arrowPosition}
+              </Text>
+              <VrButton
+                  style={{ margin: 0.1, height: 0.3, backgroundColor: 'black'}}
+                  onClick={() => this.setState({arrowPosition:0})}>
+                  <Text style={{fontSize: 0.2, textAlign: 'center'}}>Up</Text>
+              </VrButton>
+              <VrButton
+                  style={{ margin: 0.1, height: 0.3, backgroundColor: 'black'}}
+                  onClick={() => this.setState({arrowPosition:90})}>
+                  <Text style={{fontSize: 0.2, textAlign: 'center'}}>Right</Text>
+              </VrButton>
+              <VrButton
+                  style={{ margin: 0.1, height: 0.3, backgroundColor: 'black'}}
+                  onClick={() => this.setState({arrowPosition:180})}>
+                  <Text style={{fontSize: 0.2, textAlign: 'center'}}>Down</Text>
+              </VrButton>
+              <VrButton
+                  style={{ margin: 0.1, height: 0.3, backgroundColor: 'black'}}
+                  onClick={() => this.setState({arrowPosition:270})}>
+                  <Text style={{fontSize: 0.2, textAlign: 'center'}}>Left</Text>
+              </VrButton>
+          </View>
         <Model
           lit={true}
           source={{
@@ -53,8 +61,7 @@ export default class reactvr_cli_experiment extends React.Component {
           }}
           style={{
             position: "absolute",
-            layoutOrigin: [0, 0],
-            transform: [{ translate: [0, -4, -10] }, { rotateY: index }]
+            transform: [{ translate: [0, -4, -10] }, { rotateY: -135 }]
           }}
         />
       </View>
